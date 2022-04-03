@@ -3,15 +3,32 @@ package main
 import (
 	"github.com/fasthttp/router"
 	"github.com/valyala/fasthttp"
+	"golang_pet_project_1/internal/core/services/usersrv"
 	"golang_pet_project_1/internal/handlers/userhandler"
+	"golang_pet_project_1/internal/repositories/userrepo"
 	"log"
+	"sync"
 )
 
 const host = "0.0.0.0"
 const port = "8080"
 
 func main() {
-	userHandler := userhandler.UserHandler{}
+
+	m := &sync.RWMutex{}
+
+	userRepository := userrepo.Storage{
+		Filename: "db.txt",
+		Mutex:    m,
+	}
+
+	userService := usersrv.Service{
+		Storage: userRepository,
+	}
+
+	userHandler := userhandler.UserHandler{
+		UserService: userService,
+	}
 
 	r := router.New()
 	r.POST("/user/", userHandler.CreateUser)
