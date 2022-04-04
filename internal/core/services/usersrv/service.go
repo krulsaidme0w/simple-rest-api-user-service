@@ -22,12 +22,19 @@ func (s Service) Create(user domain.User) (domain.User, error) {
 }
 
 func (s Service) Find(searchType string, search string) (domain.User, error) {
-	if searchType == "id" || searchType == "username" || searchType == "name" {
-		user, err := s.Storage.Find(searchType, search)
+	switch searchType {
+	case "id":
+		user, err := s.Storage.GetByID(search)
 		return user, err
+	case "username":
+		user, err := s.Storage.GetByUsername(search)
+		return user, err
+	case "name":
+		user, err := s.Storage.GetByName(search)
+		return user, err
+	default:
+		return domain.User{}, InvalidSearchType
 	}
-
-	return domain.User{}, InvalidSearchType
 }
 
 func (s Service) Update(user domain.User) (domain.User, error) {

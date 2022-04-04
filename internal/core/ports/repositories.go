@@ -7,5 +7,7 @@ import (
 type UserRepository interface {
 	Save(user domain.User) (domain.User, error)
 	Delete(user domain.User) error
-	Find(searchType string, search string) (domain.User, error)
+	GetByID(id string) (domain.User, error)
+	GetByUsername(username string) (domain.User, error)
+	GetByName(name string) (domain.User, error)
 }

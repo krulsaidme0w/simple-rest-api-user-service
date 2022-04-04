@@ -12,14 +12,14 @@ import (
 
 const host = "0.0.0.0"
 const port = "8080"
+const pathToDB = "db"
 
 func main() {
-
 	m := &sync.RWMutex{}
 
 	userRepository := userrepo.Storage{
-		Filename: "db.txt",
-		Mutex:    m,
+		Path:  pathToDB,
+		Mutex: m,
 	}
 
 	userService := usersrv.Service{
