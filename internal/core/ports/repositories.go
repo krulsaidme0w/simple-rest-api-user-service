@@ -10,4 +10,5 @@ type UserRepository interface {
 	GetByID(id string) (domain.User, error)
 	GetByUsername(username string) (domain.User, error)
 	GetByName(name string) (domain.User, error)
+	Update(user domain.User) (domain.User, error)
 }

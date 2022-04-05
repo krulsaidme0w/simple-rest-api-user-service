@@ -1,9 +1,9 @@
-package userrepo
+package user_repo
 
 import (
 	"errors"
 	"golang_pet_project_1/internal/core/domain"
-	"golang_pet_project_1/pkg"
+	"golang_pet_project_1/pkg/utils"
 	"os"
 	"strconv"
 	"strings"
@@ -25,16 +25,20 @@ var CannotAddIndex = errors.New("CannotAddIndex")
 var UserAlreadyExists = errors.New("UserAlreadyExists")
 
 func (s Storage) addIndex(path string, data string) error {
+	s.Mutex.Lock()
+
 	indexes, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
 
-	indexesArray := strings.Split(string(indexes), "\n")
-	indexesArray = pkg.DeletyEmpty(indexesArray)
-	indexesArray = pkg.InsertToArray(indexesArray, data)
+	s.Mutex.Unlock()
 
-	err = pkg.WriteStringsToFile(path, indexesArray, s.Mutex)
+	indexesArray := strings.Split(string(indexes), "\n")
+	indexesArray = utils.DeleteEmpty(indexesArray)
+	indexesArray = utils.InsertToArray(indexesArray, data)
+
+	err = utils.WriteStringsToFile(path, indexesArray, s.Mutex)
 	if err != nil {
 		return err
 	}
@@ -45,10 +49,10 @@ func (s Storage) addIndex(path string, data string) error {
 func (s Storage) Save(user domain.User) (domain.User, error) {
 	userStr := strconv.Itoa(user.ID) + " " + user.Username + " " + user.Name + " " + user.Photo + " " + strconv.Itoa(user.Age)
 
-	err := pkg.CreateFileWithData(s.Path, strconv.Itoa(user.ID), userStr, s.Mutex)
+	err := utils.CreateFileWithData(s.Path, strconv.Itoa(user.ID), userStr, s.Mutex)
 	if err != nil {
 		switch err {
-		case pkg.FileAlreadyExists:
+		case utils.FileAlreadyExists:
 			return domain.User{}, UserAlreadyExists
 		default:
 			return domain.User{}, CannotAddIndex
@@ -73,7 +77,7 @@ func (s Storage) Delete(user domain.User) error {
 }
 
 func (s Storage) GetByID(id string) (domain.User, error) {
-	userString, err := pkg.GetFirstStringFromFile(s.Path+"/"+id, s.Mutex)
+	userString, err := utils.GetFirstStringFromFile(s.Path+"/"+id, s.Mutex)
 	if err != nil {
 		return domain.User{}, CannotFindUser
 	}
@@ -87,9 +91,43 @@ func (s Storage) GetByID(id string) (domain.User, error) {
 }
 
 func (s Storage) GetByUsername(username string) (domain.User, error) {
-	return domain.User{}, nil
+	usernameIndexes, err := utils.GetAllStringsFromFile(s.Path+"/"+usernameIndex, s.Mutex)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	id, err := utils.FindInSortedArray(usernameIndexes, username)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	user, err := s.GetByID(id)
+	if err != nil {
+		return domain.User{}, CannotFindUser
+	}
+
+	return user, nil
 }
 
 func (s Storage) GetByName(name string) (domain.User, error) {
+	nameIndexes, err := utils.GetAllStringsFromFile(s.Path+"/"+nameIndex, s.Mutex)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	id, err := utils.FindInSortedArray(nameIndexes, name)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	user, err := s.GetByID(id)
+	if err != nil {
+		return domain.User{}, CannotFindUser
+	}
+
+	return user, nil
+}
+
+func (s Storage) Update(user domain.User) (domain.User, error) {
 	return domain.User{}, nil
 }

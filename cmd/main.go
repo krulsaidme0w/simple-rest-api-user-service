@@ -5,7 +5,7 @@ import (
 	"github.com/valyala/fasthttp"
 	"golang_pet_project_1/internal/core/services/usersrv"
 	"golang_pet_project_1/internal/handlers/userhandler"
-	"golang_pet_project_1/internal/repositories/userrepo"
+	"golang_pet_project_1/internal/repositories/user_repo"
 	"log"
 	"sync"
 )
@@ -17,7 +17,7 @@ const pathToDB = "db"
 func main() {
 	m := &sync.RWMutex{}
 
-	userRepository := userrepo.Storage{
+	userRepository := user_repo.Storage{
 		Path:  pathToDB,
 		Mutex: m,
 	}

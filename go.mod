@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/bxcodec/faker/v3 v3.8.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20220323135742-7576ce6963fd // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

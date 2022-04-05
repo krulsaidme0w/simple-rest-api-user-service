@@ -1,6 +1,6 @@
-package pkg
+package utils
 
-func DeletyEmpty(s []string) []string {
+func DeleteEmpty(s []string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {
