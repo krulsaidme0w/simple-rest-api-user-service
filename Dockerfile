@@ -17,6 +17,10 @@ FROM alpine:latest
 RUN apk upgrade --update-cache --available && \
     rm -rf /var/cache/apk/*
 
+ENV PET_HOST 0.0.0.0
+ENV PET_PORT 8080
+ENV PET_DB db
+
 WORKDIR /app
 
 COPY --from=build /app/ .

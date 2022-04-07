@@ -2,14 +2,22 @@ package userhandler
 
 import (
 	"encoding/json"
+
 	"github.com/valyala/fasthttp"
+
 	"golang_pet_project_1/internal/core/domain"
 	"golang_pet_project_1/internal/core/ports"
-	"golang_pet_project_1/internal/core/services/usersrv"
+	"golang_pet_project_1/pkg/errors/handler_errors"
 )
 
 type UserHandler struct {
-	UserService ports.UserService
+	userService ports.UserService
+}
+
+func NewHandler(userService ports.UserService) *UserHandler {
+	return &UserHandler{
+		userService: userService,
+	}
 }
 
 func (h UserHandler) CreateUser(ctx *fasthttp.RequestCtx) {
@@ -19,8 +27,7 @@ func (h UserHandler) CreateUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	createdUser, err := h.UserService.Create(*user)
-
+	createdUser, err := h.userService.Create(user)
 	if err != nil {
 		ctx.Error("Bad request", fasthttp.StatusBadRequest)
 		return
@@ -40,10 +47,10 @@ func (h UserHandler) GetUser(ctx *fasthttp.RequestCtx) {
 	searchType := string(ctx.QueryArgs().Peek("searchType"))
 	search := string(ctx.QueryArgs().Peek("search"))
 
-	user, err := h.UserService.Find(searchType, search)
+	user, err := h.userService.Find(searchType, search)
 	if err != nil {
 		switch err {
-		case usersrv.InvalidSearchType:
+		case handler_errors.InvalidSearchType:
 			ctx.Error("Invalid searchType supplied", fasthttp.StatusBadRequest)
 		default:
 			ctx.Error("User not found", fasthttp.StatusNotFound)

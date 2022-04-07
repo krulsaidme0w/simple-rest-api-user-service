@@ -5,10 +5,10 @@ import (
 )
 
 type UserRepository interface {
-	Save(user domain.User) (domain.User, error)
-	Delete(user domain.User) error
-	GetByID(id string) (domain.User, error)
-	GetByUsername(username string) (domain.User, error)
-	GetByName(name string) (domain.User, error)
-	Update(user domain.User) (domain.User, error)
+	Save(user *domain.User) (*domain.User, error)
+	GetByID(id string) (*domain.User, error)
+	GetByUsername(username string) (*domain.User, error)
+	GetByName(name string) (*domain.User, error)
+	Update(user *domain.User) (*domain.User, error)
+	Delete(user *domain.User) error
 }

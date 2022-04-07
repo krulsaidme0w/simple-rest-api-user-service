@@ -5,31 +5,31 @@ info:
 host: "localhost"
 basePath: "/"
 tags:
-  - name: "user"
-    description: "Operations about user"
+  - name: "userservice"
+    description: "Operations about userservice"
     externalDocs:
-      description: "user crud"
+      description: "userservice crud"
       url: "https://hentaihaven.red/"
 paths:
   /user:
     post:
       tags:
-        - "user"
-      summary: "Create user"
-      description: "Create user"
+        - "userservice"
+      summary: "Create userservice"
+      description: "Create userservice"
       operationId: "createUser"
       produces:
         - "application/json"
       parameters:
         - in: "body"
           name: "body"
-          description: "Created user object"
+          description: "Created userservice object"
           required: true
           schema:
             $ref: "#/definitions/User"
       responses:
         '200':
-          description: "Created new user"
+          description: "Created new userservice"
           schema:
             $ref: "#/definitions/User"
         "405":
@@ -37,8 +37,8 @@ paths:
   /user/get:
     get:
       tags:
-        - "user"
-      summary: "Get user"
+        - "userservice"
+      summary: "Get userservice"
       description: ""
       operationId: "getUserByName"
       produces:
@@ -64,48 +64,48 @@ paths:
   /user/{user_id}:
     post:
       tags:
-        - "user"
-      summary: "Update user"
-      description: "Update user"
+        - "userservice"
+      summary: "Update userservice"
+      description: "Update userservice"
       operationId: "updateUser"
       produces:
         - "application/json"
       parameters:
         - name: "user_id"
           in: "path"
-          description: "The id of user that needs to be updated"
+          description: "The id of userservice that needs to be updated"
           required: true
           type: "string"
         - in: "body"
           name: "body"
-          description: "Updated user object"
+          description: "Updated userservice object"
           required: true
           schema:
             $ref: "#/definitions/User"
       responses:
         "400":
-          description: "Invalid user id supplied"
+          description: "Invalid userservice id supplied"
         "404":
           description: "User not found"
         "405":
           description: "Invalid input"
     delete:
       tags:
-        - "user"
-      summary: "Delete user"
-      description: "Delete user"
+        - "userservice"
+      summary: "Delete userservice"
+      description: "Delete userservice"
       operationId: "deleteUser"
       produces:
         - "application/json"
       parameters:
         - name: "user_id"
           in: "path"
-          description: "The id of user that needs to be deleted"
+          description: "The id of userservice that needs to be deleted"
           required: true
           type: "string"
       responses:
         "400":
-          description: "Invalid user id supplied"
+          description: "Invalid userservice id supplied"
         "404":
           description: "User not found"
 definitions:

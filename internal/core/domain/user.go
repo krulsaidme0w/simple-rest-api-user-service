@@ -1,9 +1,8 @@
 package domain
 
 import (
-	"errors"
-	"strconv"
-	"strings"
+	"encoding/json"
+	"io/ioutil"
 )
 
 type User struct {
@@ -14,32 +13,29 @@ type User struct {
 	Age      int    `json:"age"`
 }
 
-var CannotBuildUser = errors.New("CannotBuildUser")
-
-const userFieldsCount = 5
-
-func BuildUser(userString string) (User, error) {
-	userFields := strings.Split(userString, " ")
-	if len(userFields) != userFieldsCount {
-		return User{}, CannotBuildUser
-	}
-
-	id, err := strconv.Atoi(userFields[0])
+func ReadUserFromFile(path string) (*User, error) {
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
-		return User{}, CannotBuildUser
+		return &User{}, err
 	}
 
-	age, err := strconv.Atoi(userFields[4])
+	var user User
+	if err = json.Unmarshal(b, &user); err != nil {
+		return &User{}, err
+	}
+
+	return &user, nil
+}
+
+func WriteUserToFile(path string, user *User) (*User, error) {
+	b, err := json.MarshalIndent(user, "", " ")
 	if err != nil {
-		return User{}, CannotBuildUser
+		return &User{}, err
 	}
 
-	user := User{
-		ID:       id,
-		Username: userFields[1],
-		Name:     userFields[2],
-		Photo:    userFields[3],
-		Age:      age,
+	err = ioutil.WriteFile(path, b, 0644)
+	if err != nil {
+		return &User{}, err
 	}
 
 	return user, nil
