@@ -33,7 +33,7 @@ func (c *Cache) FillFromDB(path string) error {
 	}
 
 	wg := &sync.WaitGroup{}
-	maxGoroutines := 400
+	maxGoroutines := 1000
 	guardChan := make(chan struct{}, maxGoroutines)
 
 	for _, f := range files {

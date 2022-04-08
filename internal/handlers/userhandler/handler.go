@@ -119,4 +119,5 @@ func (h UserHandler) DeleteUser(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.SetStatusCode(200)
+	ctx.SetBody([]byte("User deleted"))
 }
