@@ -50,6 +50,6 @@ func (s Service) Update(user *domain.User) (*domain.User, error) {
 	return updatedUser, nil
 }
 
-func (s Service) Delete(user *domain.User) error {
-	return s.storage.Delete(user)
+func (s Service) Delete(userID string) error {
+	return s.storage.Delete(userID)
 }

@@ -57,8 +57,8 @@ func main() {
 	r := router.New()
 	r.POST("/user/", userHandler.CreateUser)
 	r.GET("/user/get/", userHandler.GetUser)
-	r.POST("/user/{user_id}", userHandler.UpdateUser)
-	r.DELETE("/user/{user_id}", userHandler.DeleteUser)
+	r.POST("/user/{user_id}/", userHandler.UpdateUser)
+	r.DELETE("/user/{user_id}/", userHandler.DeleteUser)
 
 	if err := fasthttp.ListenAndServe(c.Host+":"+c.Port, r.Handler); err != nil {
 		log.Fatalf("Error in ListenAndServe: %s", err)

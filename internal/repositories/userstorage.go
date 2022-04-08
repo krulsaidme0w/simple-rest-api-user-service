@@ -20,7 +20,7 @@ func NewStorage(storage *file.Storage, cache *cache.Cache) *Storage {
 	}
 }
 
-func (s Storage) Save(user *domain.User) (*domain.User, error) {
+func (s *Storage) Save(user *domain.User) (*domain.User, error) {
 	savedUser, err := s.storage.Save(user)
 	if err != nil {
 		return &domain.User{}, err
@@ -34,7 +34,7 @@ func (s Storage) Save(user *domain.User) (*domain.User, error) {
 	return savedUser, nil
 }
 
-func (s Storage) GetByID(id string) (*domain.User, error) {
+func (s *Storage) GetByID(id string) (*domain.User, error) {
 	user, err := s.storage.GetByID(id)
 	if err != nil {
 		return &domain.User{}, err
@@ -43,7 +43,7 @@ func (s Storage) GetByID(id string) (*domain.User, error) {
 	return user, err
 }
 
-func (s Storage) GetByUsername(username string) (*domain.User, error) {
+func (s *Storage) GetByUsername(username string) (*domain.User, error) {
 	id, err := s.cache.GetIDByUsername(username)
 	if err != nil {
 		return &domain.User{}, err
@@ -52,7 +52,7 @@ func (s Storage) GetByUsername(username string) (*domain.User, error) {
 	return s.GetByID(strconv.Itoa(id))
 }
 
-func (s Storage) GetByName(name string) (*domain.User, error) {
+func (s *Storage) GetByName(name string) (*domain.User, error) {
 	id, err := s.cache.GetIDByName(name)
 	if err != nil {
 		return &domain.User{}, err
@@ -61,10 +61,30 @@ func (s Storage) GetByName(name string) (*domain.User, error) {
 	return s.GetByID(strconv.Itoa(id))
 }
 
-func (s Storage) Update(user *domain.User) (*domain.User, error) {
-	return &domain.User{}, nil
+func (s *Storage) Update(user *domain.User) (*domain.User, error) {
+	updatedUser, err := s.storage.Update(user)
+	if err != nil {
+		return &domain.User{}, err
+	}
+
+	if err = s.cache.Update(user); err != nil {
+		return &domain.User{}, err
+	}
+
+	return updatedUser, nil
 }
 
-func (s Storage) Delete(user *domain.User) error {
-	return nil
+func (s *Storage) Delete(userID string) error {
+	user, err := s.storage.GetByID(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.storage.Delete(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.cache.Delete(user.Username, user.Name)
+	return err
 }
