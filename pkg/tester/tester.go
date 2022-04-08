@@ -5,5 +5,5 @@ import "golang_pet_project_1/pkg/scripts"
 const userCount = 1000000
 
 func main() {
-	scripts.FillDB(userCount)
+	scripts.FillDB(userCount, "../db")
 }

@@ -1,54 +1,36 @@
 package scripts
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"time"
+	"log"
+	"strconv"
+	"sync"
 
 	"github.com/bxcodec/faker/v3"
 
 	"golang_pet_project_1/internal/core/domain"
 )
 
-func FillDB(userCount int) {
-	maxGoroutines := 10
-	guard := make(chan struct{}, maxGoroutines)
-
-	for i := 0; i < userCount; i++ {
-		guard <- struct{}{}
-		go func(i int) {
-			start := time.Now()
-
+func FillDB(userCount int, path string) {
+	guardChan := make(chan struct{}, 2)
+	wg := &sync.WaitGroup{}
+	for i := 999901; i < userCount+1; i++ {
+		guardChan <- struct{}{}
+		wg.Add(1)
+		go func(i int, wg *sync.WaitGroup) {
+			defer wg.Done()
 			var user domain.User
 			err := faker.FakeData(&user)
 			user.ID = i
 			if err != nil {
-				fmt.Println(err)
+				log.Fatalf(err.Error())
 			}
 
-			b, err := json.Marshal(user)
+			_, err = domain.WriteUserToFile(path+"/"+strconv.Itoa(user.ID), &user)
 			if err != nil {
-				fmt.Println(err)
+				log.Fatal(err.Error())
 			}
-
-			resp, err := http.Post("http://0.0.0.0:8080/userservice/", "application/json", bytes.NewReader(b))
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			err = resp.Body.Close()
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			stop := time.Now()
-
-			fmt.Print("TIME: ")
-			fmt.Println(stop.Sub(start).Milliseconds())
-
-			<-guard
-		}(i)
+			<-guardChan
+		}(i, wg)
 	}
+	wg.Done()
 }

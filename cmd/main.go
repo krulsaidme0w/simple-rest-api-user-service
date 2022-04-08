@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/fasthttp/router"
 	iradix "github.com/hashicorp/go-immutable-radix"
@@ -20,7 +22,7 @@ func main() {
 	c, err := config.SetUp()
 	c.Port = "8080"
 	c.Host = "0.0.0.0"
-	c.DB = "db"
+	c.DB = "../db"
 
 	//if err != nil {
 	//	c.Port = "8080"
@@ -30,16 +32,21 @@ func main() {
 	//}
 
 	fileMutex := &sync.RWMutex{}
+	prefixMutex := &sync.RWMutex{}
 
 	usernamePrefix := iradix.New()
 	namePrefix := iradix.New()
 
-	cache := usercache.NewCache(usernamePrefix, namePrefix)
+	cache := usercache.NewCache(usernamePrefix, namePrefix, prefixMutex)
 
+	start := time.Now()
 	err = cache.FillFromDB(c.DB)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
+	end := time.Now()
+
+	fmt.Println("FILLED FROM DB: ", end.Sub(start).Seconds(), "s")
 
 	fsStorage := file.NewStorage(c.DB, fileMutex)
 

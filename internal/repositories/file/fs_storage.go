@@ -22,7 +22,7 @@ func NewStorage(path string, mutex *sync.RWMutex) *Storage {
 	}
 }
 
-func (s Storage) Save(user *domain.User) (*domain.User, error) {
+func (s *Storage) Save(user *domain.User) (*domain.User, error) {
 	if userExists := s.userExists(user); userExists {
 		return &domain.User{}, repository_errors.UserAlreadyExists
 	}
@@ -38,7 +38,7 @@ func (s Storage) Save(user *domain.User) (*domain.User, error) {
 	return savedUser, nil
 }
 
-func (s Storage) GetByID(id string) (*domain.User, error) {
+func (s *Storage) GetByID(id string) (*domain.User, error) {
 	user, err := domain.ReadUserFromFile(s.path + "/" + id)
 	if err != nil {
 		return &domain.User{}, err
@@ -47,15 +47,15 @@ func (s Storage) GetByID(id string) (*domain.User, error) {
 	return user, nil
 }
 
-func (s Storage) Update(user *domain.User) (*domain.User, error) {
+func (s *Storage) Update(user *domain.User) (*domain.User, error) {
 	return &domain.User{}, nil
 }
 
-func (s Storage) Delete(user *domain.User) error {
+func (s *Storage) Delete(user *domain.User) error {
 	return nil
 }
 
-func (s Storage) userExists(user *domain.User) bool {
+func (s *Storage) userExists(user *domain.User) bool {
 	_, err := os.Stat(s.pathToUser(user))
 	if errors.Is(err, os.ErrNotExist) {
 		return false
@@ -64,6 +64,6 @@ func (s Storage) userExists(user *domain.User) bool {
 	return true
 }
 
-func (s Storage) pathToUser(user *domain.User) string {
+func (s *Storage) pathToUser(user *domain.User) string {
 	return s.path + "/" + strconv.Itoa(user.ID)
 }
