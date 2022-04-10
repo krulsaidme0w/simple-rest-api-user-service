@@ -10,8 +10,6 @@ type Config struct {
 	DB                string
 	MinioRootUser     string
 	MinioRootPassword string
-	MinioHost         string
-	MinioPort         string
 	UserBucketName    string
 }
 

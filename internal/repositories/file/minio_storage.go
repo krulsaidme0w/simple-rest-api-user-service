@@ -18,7 +18,7 @@ type MinioStorage struct {
 
 func NewMinioStorage(c *config.Config) (*MinioStorage, error) {
 	minioClient, err := minio.New(
-		c.MinioHost+":"+c.MinioPort,
+		"minio:9000",
 		c.MinioRootUser,
 		c.MinioRootPassword,
 		false,

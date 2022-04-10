@@ -1,13 +1,6 @@
 version: "3.9"
 
 services:
-  backend:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
   minio:
     image: minio/minio:latest
     command: server --console-address ":9001" /data/
@@ -24,5 +17,25 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - pet
+
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - minio
+    links:
+      - minio
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - pet
+
 volumes:
   minio-storage:
+networks:
+  pet:
+    name: pet

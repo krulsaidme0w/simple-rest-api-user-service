@@ -28,8 +28,6 @@ func main() {
 	//c.MinioRootUser = "minio"
 	//c.MinioRootPassword = "minio123"
 	//c.UserBucketName = "users"
-	//c.MinioHost = "127.0.0.1"
-	//c.MinioPort = "9000"
 
 	//fileMutex := &sync.RWMutex{}
 	prefixMutex := &sync.RWMutex{}
