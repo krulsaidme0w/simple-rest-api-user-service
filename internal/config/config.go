@@ -5,9 +5,14 @@ import (
 )
 
 type Config struct {
-	Host string
-	Port string
-	DB   string
+	Host              string
+	Port              string
+	DB                string
+	MinioRootUser     string
+	MinioRootPassword string
+	MinioHost         string
+	MinioPort         string
+	UserBucketName    string
 }
 
 func SetUp() (*Config, error) {

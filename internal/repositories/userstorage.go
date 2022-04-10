@@ -4,16 +4,16 @@ import (
 	"strconv"
 
 	"golang_pet_project_1/internal/core/domain"
+	"golang_pet_project_1/internal/core/ports"
 	"golang_pet_project_1/internal/repositories/cache"
-	"golang_pet_project_1/internal/repositories/file"
 )
 
 type Storage struct {
-	storage *file.Storage
+	storage ports.UserStorage
 	cache   *cache.Cache
 }
 
-func NewStorage(storage *file.Storage, cache *cache.Cache) *Storage {
+func NewStorage(storage ports.UserStorage, cache *cache.Cache) *Storage {
 	return &Storage{
 		storage: storage,
 		cache:   cache,

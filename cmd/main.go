@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/fasthttp/router"
 	iradix "github.com/hashicorp/go-immutable-radix"
@@ -14,43 +12,48 @@ import (
 	"golang_pet_project_1/internal/core/services/userservice"
 	"golang_pet_project_1/internal/handlers/userhandler"
 	userrepository "golang_pet_project_1/internal/repositories"
-	usercache "golang_pet_project_1/internal/repositories/cache"
+	"golang_pet_project_1/internal/repositories/cache"
 	"golang_pet_project_1/internal/repositories/file"
 )
 
 func main() {
 	c, err := config.SetUp()
-	c.Port = "8080"
-	c.Host = "0.0.0.0"
-	c.DB = "../db"
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	//if err != nil {
-	//	c.Port = "8080"
-	//	c.Host = "0.0.0.0"
-	//	c.DB = "db"
-	//	//log.Fatal(err.Error())
-	//}
+	//c.DB = "db"
+	//c.Port = "8080"
+	//c.Host = "0.0.0.0"
+	//c.MinioRootUser = "minio"
+	//c.MinioRootPassword = "minio123"
+	//c.UserBucketName = "users"
+	//c.MinioHost = "127.0.0.1"
+	//c.MinioPort = "9000"
 
-	fileMutex := &sync.RWMutex{}
+	//fileMutex := &sync.RWMutex{}
 	prefixMutex := &sync.RWMutex{}
 
 	usernamePrefix := iradix.New()
 	namePrefix := iradix.New()
 
-	cache := usercache.NewCache(usernamePrefix, namePrefix, prefixMutex)
+	userCache := cache.NewCache(usernamePrefix, namePrefix, prefixMutex)
+	//start := time.Now()
+	//err = userCache.FillFromDB(c.DB)
+	//if err != nil {
+	//	log.Fatalf(err.Error())
+	//}
+	//end := time.Now()
+	//
+	//fmt.Println("FILLED FROM DB: ", end.Sub(start).Seconds(), "s")
 
-	start := time.Now()
-	err = cache.FillFromDB(c.DB)
+	//fsStorage := file.NewStorage(c.DB, fileMutex)
+	minioStorage, err := file.NewMinioStorage(c)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err.Error())
 	}
-	end := time.Now()
 
-	fmt.Println("FILLED FROM DB: ", end.Sub(start).Seconds(), "s")
-
-	fsStorage := file.NewStorage(c.DB, fileMutex)
-
-	userRepository := userrepository.NewStorage(fsStorage, cache)
+	userRepository := userrepository.NewStorage(minioStorage, userCache)
 	userService := userservice.NewService(userRepository)
 	userHandler := userhandler.NewHandler(userService)
 

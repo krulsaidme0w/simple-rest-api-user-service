@@ -13,7 +13,7 @@ import (
 func FillDB(userCount int, path string) {
 	guardChan := make(chan struct{}, 2)
 	wg := &sync.WaitGroup{}
-	for i := 999901; i < userCount+1; i++ {
+	for i := 1; i < userCount+1; i++ {
 		guardChan <- struct{}{}
 		wg.Add(1)
 		go func(i int, wg *sync.WaitGroup) {

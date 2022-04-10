@@ -12,3 +12,10 @@ type UserRepository interface {
 	Update(user *domain.User) (*domain.User, error)
 	Delete(userID string) error
 }
+
+type UserStorage interface {
+	Save(user *domain.User) (*domain.User, error)
+	GetByID(id string) (*domain.User, error)
+	Update(user *domain.User) (*domain.User, error)
+	Delete(userID string) error
+}
