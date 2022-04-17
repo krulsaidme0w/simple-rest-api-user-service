@@ -18,7 +18,7 @@ type MinioStorage struct {
 
 func NewMinioStorage(c *config.Config) (*MinioStorage, error) {
 	minioClient, err := minio.New(
-		"minio:9000",
+		c.MinioEndpoint,
 		c.MinioRootUser,
 		c.MinioRootPassword,
 		false,
@@ -92,13 +92,34 @@ func (m *MinioStorage) Update(user *domain.User) (*domain.User, error) {
 }
 
 func (m *MinioStorage) Delete(userID string) error {
-	err := m.minioClient.RemoveObject(
+	return m.minioClient.RemoveObject(
 		m.userBucket,
 		userID,
 	)
-	if err != nil {
-		return err
+}
+
+func (m *MinioStorage) GetAllUsers() ([]domain.User, error) {
+	objectsInfo := m.minioClient.ListObjects(
+		m.userBucket,
+		"",
+		false,
+		nil,
+	)
+
+	users := make([]domain.User, 0)
+
+	for object := range objectsInfo {
+		if object.Err != nil {
+			return []domain.User{}, object.Err
+		}
+
+		user, err := m.GetByID(object.Key)
+		if err != nil {
+			return []domain.User{}, object.Err
+		}
+
+		users = append(users, *user)
 	}
 
-	return nil
+	return users, nil
 }

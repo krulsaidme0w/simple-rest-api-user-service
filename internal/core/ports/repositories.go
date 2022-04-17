@@ -18,4 +18,5 @@ type UserStorage interface {
 	GetByID(id string) (*domain.User, error)
 	Update(user *domain.User) (*domain.User, error)
 	Delete(userID string) error
+	GetAllUsers() ([]domain.User, error)
 }

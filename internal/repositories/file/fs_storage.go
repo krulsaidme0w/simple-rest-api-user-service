@@ -2,10 +2,13 @@ package file
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"sync"
 
+	"golang_pet_project_1/internal/config"
 	"golang_pet_project_1/internal/core/domain"
 	"golang_pet_project_1/pkg/errors/repository_errors"
 )
@@ -15,9 +18,10 @@ type Storage struct {
 	mutex *sync.RWMutex
 }
 
-func NewStorage(path string, mutex *sync.RWMutex) *Storage {
+func NewStorage(c *config.Config) *Storage {
+	mutex := &sync.RWMutex{}
 	return &Storage{
-		path:  path,
+		path:  c.DB,
 		mutex: mutex,
 	}
 }
@@ -80,6 +84,25 @@ func (s *Storage) Delete(userID string) error {
 	}
 
 	return nil
+}
+
+func (s *Storage) GetAllUsers() ([]domain.User, error) {
+	files, err := ioutil.ReadDir(s.path)
+	if err != nil {
+		return []domain.User{}, err
+	}
+
+	users := make([]domain.User, 0, len(files))
+
+	for _, f := range files {
+		user, err := domain.ReadUserFromFile(s.path + "/" + f.Name())
+		if err != nil {
+			log.Fatal("bad path:", s.path+"/"+f.Name(), " ", err)
+		}
+		users = append(users, *user)
+	}
+
+	return users, nil
 }
 
 func (s *Storage) userExists(user *domain.User) bool {
