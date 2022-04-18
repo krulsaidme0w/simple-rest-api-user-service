@@ -10,3 +10,6 @@ var UserNotExists = errors.New("UserNotExists")
 var CannotAddOrUpdateUserToCache = errors.New("CannotAddUserToCache")
 var CannotFindUserInCache = errors.New("CannotFindUserInCache")
 var CannotDeleteUserFromCache = errors.New("CannotDeleteUserFromCache")
+
+var UserWithThisUsernameExists = errors.New("UserWithThisUsernameExists")
+var UserWithThisNameExists = errors.New("UserWithThisNameExists")

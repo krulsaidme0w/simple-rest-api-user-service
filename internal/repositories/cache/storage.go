@@ -35,6 +35,16 @@ func (c *Cache) Add(user *domain.User) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
+	_, isFound := c.usernamePrefix.Get([]byte(user.Username))
+	if !isFound {
+		return repository_errors.UserWithThisUsernameExists
+	}
+
+	_, isFound = c.namePrefix.Get([]byte(user.Name))
+	if !isFound {
+		return repository_errors.UserWithThisNameExists
+	}
+
 	c.usernamePrefix, _, _ = c.usernamePrefix.Insert([]byte(user.Username), user.ID)
 	c.namePrefix, _, _ = c.namePrefix.Insert([]byte(user.Name), user.ID)
 

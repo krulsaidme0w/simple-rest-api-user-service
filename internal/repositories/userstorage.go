@@ -21,12 +21,12 @@ func NewStorage(storage ports.UserStorage, cache *cache.Cache) *Storage {
 }
 
 func (s *Storage) Save(user *domain.User) (*domain.User, error) {
-	savedUser, err := s.storage.Save(user)
+	err := s.cache.Add(user)
 	if err != nil {
 		return &domain.User{}, err
 	}
 
-	err = s.cache.Add(user)
+	savedUser, err := s.storage.Save(user)
 	if err != nil {
 		return &domain.User{}, err
 	}
