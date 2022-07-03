@@ -1,0 +1,128 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Pet project 1"
+host: "localhost"
+basePath: "/"
+tags:
+  - name: "userservice"
+    description: "Operations about userservice"
+    externalDocs:
+      description: "userservice crud"
+      url: "https://hentaihaven.red/"
+paths:
+  /user:
+    post:
+      tags:
+        - "userservice"
+      summary: "Create userservice"
+      description: "Create userservice"
+      operationId: "createUser"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Created userservice object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        '200':
+          description: "Created new userservice"
+          schema:
+            $ref: "#/definitions/User"
+        "405":
+          description: "Invalid input"
+  /user/get:
+    get:
+      tags:
+        - "userservice"
+      summary: "Get userservice"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+        - "application/json"
+      parameters:
+        - in: query
+          name: searchType
+          type: string
+          description: Search type (ID, username, name)
+        - in: query
+          name: search
+          type: string
+          description: The numbers of items to return
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid searchType supplied"
+        "404":
+          description: "User not found"
+  /user/{user_id}:
+    post:
+      tags:
+        - "userservice"
+      summary: "Update userservice"
+      description: "Update userservice"
+      operationId: "updateUser"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "The id of userservice that needs to be updated"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Updated userservice object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid userservice id supplied"
+        "404":
+          description: "User not found"
+        "405":
+          description: "Invalid input"
+    delete:
+      tags:
+        - "userservice"
+      summary: "Delete userservice"
+      description: "Delete userservice"
+      operationId: "deleteUser"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "The id of userservice that needs to be deleted"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Invalid userservice id supplied"
+        "404":
+          description: "User not found"
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+      name:
+        type: "string"
+      photo:
+        type: "string"
+      age:
+        type: "integer"
+    xml:
+      name: "User"
+  
